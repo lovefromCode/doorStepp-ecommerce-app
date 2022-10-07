@@ -1,8 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, TextInput, Label, Checkbox, Button } from "flowbite-react";
+import Login from '../auth/Login';
+import SignUp from '../auth/SignUp';
 
 function Header() {
-  const [showModal, setShowModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState({
+    email: '',
+    password: '',
+    username: ''
+  });
+  const [userDetail, setUserDetail] = useState({
+    email: '',
+    password: '',
+    username: '',
+  });
+  const [authModal, setAuthModal] = useState({
+    show: false,
+    authType: ""
+  })
+
+  //* validate the input fields
+  const validate = inputs => {
+    const errors = {};
+    if (!inputs.email || inputs.email === '') {
+      errors.email = 'Email cannot be empty';
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(inputs.email)) {
+      errors.email = 'Invalid email address';
+    }
+    if (!inputs.password || inputs.password === '') {
+      errors.password = 'Password cannot be empty';
+    }
+    if (authModal.authType === 'signup' && !inputs.username || inputs.username === '') {
+      errors.username = 'Username cannot be empty';
+    }
+    return errors;
+  };
+
+  //* show password feature
+  useEffect(() => {
+    if (document.getElementById('password')) {
+      if (showPassword) {
+        document.getElementById('password').type = 'text';
+      } else {
+        document.getElementById('password').type = 'password';
+      }
+    }
+  }, [showPassword]);
+
+  //* handle login functionality
+  const handleAuth = () => {
+    console.log("handle login ....");
+    const validationErrors = validate(userDetail);
+    const errorPresent = Object.keys(validationErrors).length > 0;
+    // console.log({ errorPresent });
+    if (errorPresent) {
+      setError(validationErrors);
+      return false;
+    }
+  }
+
   return (
     <div>
 
@@ -15,80 +71,75 @@ function Header() {
           <div>
             <button
               type="button"
-              onClick={() => setShowModal(true)}
-              class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-full text-sm px-6 py-2 mr-2 mb-2">Sign in</button>
-            <button type="button" class="text-blue-700 hover:text-blue-800 font-medium text-sm px-5 py-2 mr-2 mb-2">Sign up</button>
+              onClick={() => {
+                setAuthModal(prevState => {
+                  return {
+                    ...prevState,
+                    showModal: true,
+                    authType: "login"
+                  }
+                })
+              }}
+              class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-full text-sm px-6 py-2 mr-2 mb-2"
+            >
+              Sign in
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setAuthModal(prevState => {
+                  return {
+                    ...prevState,
+                    showModal: true,
+                    authType: "signup"
+                  }
+                })
+              }}
+              class="text-blue-700 hover:text-blue-800 font-medium text-sm px-5 py-2 mr-2 mb-2"
+            >
+              Sign up
+            </button>
           </div>
         </div>
       </nav>
 
 
-      {showModal ? (
-      <Modal
-      show={true}
-      size="md"
-      popup={true}
-      onClose={() => setShowModal(false)}
-    >
-      <Modal.Header />
-      <Modal.Body>
-        <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
-          <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-            Sign in to our platform
-          </h3>
-          <div>
-            <div className="mb-2 block">
-              <Label
-                htmlFor="email"
-                value="Your email"
-              />
-            </div>
-            <TextInput
-              id="email"
-              placeholder="name@company.com"
-              required={true}
-            />
-          </div>
-          <div>
-            <div className="mb-2 block">
-              <Label
-                htmlFor="password"
-                value="Your password"
-              />
-            </div>
-            <TextInput
-              id="password"
-              type="password"
-              required={true}
-            />
-          </div>
-          <div className="flex justify-between">
-            <div className="flex items-center gap-2">
-              <Checkbox id="remember" />
-              <Label htmlFor="remember">
-                Remember me
-              </Label>
-            </div>
-            <a
-              href="/modal"
-              className="text-sm text-blue-700 hover:underline dark:text-blue-500"
-            >
-              Lost Password?
-            </a>
-          </div>
-          <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
-            Not registered?{' '}
-            <a
-              href="/modal"
-              className="text-blue-700 hover:underline dark:text-blue-500"
-            >
-              Create account
-            </a>
-          </div>
-        </div>
-      </Modal.Body>
-    </Modal>
-      ) : null}
+      {
+        authModal.showModal === true
+        && authModal.authType === 'login'
+        && <Login
+          {...{
+            userDetail,
+            setUserDetail,
+            authModal,
+            setAuthModal,
+            showPassword,
+            setShowPassword,
+            error,
+            setError,
+            handleAuth,
+          }}
+        />
+      }
+
+      {
+        authModal.showModal === true
+        && authModal.authType === 'signup'
+        && <SignUp
+          {...{
+            userDetail,
+            setUserDetail,
+            authModal,
+            setAuthModal,
+            showPassword,
+            setShowPassword,
+            error,
+            setError,
+            handleAuth,
+          }}
+        />
+      }
+
     </div>
   )
 }
