@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, TextInput, Label, Checkbox, Button } from "flowbite-react";
+import { Modal, TextInput, Label, Checkbox, Button, Spinner } from "flowbite-react";
 
 function Login({
     userDetail,
@@ -28,20 +28,21 @@ function Login({
                     })
                     setUserDetail(prevState => {
                         return {
-                          ...prevState,
-                          email: '',
-                          password: '',
-                          username: '',
+                            ...prevState,
+                            email: '',
+                            password: '',
+                            username: '',
                         }
-                      })
-                      setError(prevState => {
+                    })
+                    setError(prevState => {
                         return {
-                          ...prevState,
-                          email: '',
-                          password: '',
-                          username: '',
+                            ...prevState,
+                            email: '',
+                            password: '',
+                            username: '',
                         }
-                      })
+                    })
+                    setShowPassword(false)
                 }}
             >
                 <Modal.Header />
@@ -121,7 +122,8 @@ function Login({
                         </div>
                         <div className="w-full">
                             <Button onClick={handleAuth}>
-                                Click here to Login
+                                <span className='px-2'> Click here to Login </span>
+                                { authModal.spin ? <Spinner /> : null }
                             </Button>
                         </div>
                         <div className="text-sm font-medium text-gray-500">
@@ -152,6 +154,7 @@ function Login({
                                             username: '',
                                         }
                                     })
+                                    setShowPassword(false)
                                 }}
                             >
                                 Create account
