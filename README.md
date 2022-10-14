@@ -32,3 +32,14 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+
+
+
+###### - Important note
+# Nextjs by default supports moving /pages to src/ folder.
+- Create a /src folder in the root directory.
+- Delete the /.next folder
+- Move /pages to the /src folder
+- Remember package.json, .gitignore and other config files needs to be in the root directory and should not be moved to the /src folder.
+- Once that is done just run the command $ npm run dev , so you can view it on your localhost.
