@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { auth } from '../../../firebase-setup';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { useRouter } from 'next/router';
+import { Dropdown, Avatar } from "flowbite-react";
 import Login from '../auth/Login';
 import SignUp from '../auth/SignUp';
 
+
 function Header() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isloggedIn, setLoggedIn] = useState(false);
   const [error, setError] = useState({
     email: '',
     password: '',
@@ -16,8 +22,14 @@ function Header() {
   });
   const [authModal, setAuthModal] = useState({
     show: false,
-    authType: ""
+    authType: "",
+    spin: false,
   })
+  const [userCredentials, setUserCredentials] = useState({
+    email: ""
+  })
+
+  const router = useRouter()
 
   //* validate the input fields
   const validate = inputs => {
@@ -30,10 +42,12 @@ function Header() {
     if (!inputs.password || inputs.password === '') {
       errors.password = 'Password cannot be empty';
     }
-    if (authModal.authType === 'signup' && !inputs.username || inputs.username === '') {
-      errors.username = 'Username cannot be empty';
+    if (authModal.authType === 'signup') {
+      if (!inputs.username || inputs.username === '') {
+        errors.username = 'Username cannot be empty';
+      }
     }
-    return errors;
+    return errors
   };
 
   //* show password feature
@@ -49,13 +63,74 @@ function Header() {
 
   //* handle login functionality
   const handleAuth = () => {
-    console.log("handle login ....");
     const validationErrors = validate(userDetail);
     const errorPresent = Object.keys(validationErrors).length > 0;
-    // console.log({ errorPresent });
     if (errorPresent) {
       setError(validationErrors);
       return false;
+    }
+    console.log(authModal.authType);
+    if (authModal.authType === 'login') {
+      setAuthModal(prevState => {
+        return {
+          ...prevState,
+          spin: true
+        }
+      })
+      signInWithEmailAndPassword(auth, userDetail.email, userDetail.password)
+        .then((res) => {
+          setUserCredentials(prevState => {
+            return {
+              ...prevState,
+              email: res.user.email,
+            }
+          })
+          setAuthModal(prevState => {
+            return {
+              ...prevState,
+              show: false,
+              authType: "",
+              spin: false,
+            }
+          })
+          setUserDetail(prevState => {
+            return {
+              ...prevState,
+              email: '',
+              password: '',
+              username: '',
+            }
+          })
+          setError(prevState => {
+            return {
+              ...prevState,
+              email: '',
+              password: '',
+              username: '',
+            }
+          })
+          setShowPassword(false)
+          setLoggedIn(true)
+          router.push("/food-dashboard")
+        })
+        .catch((error) => {
+          setAuthModal(prevState => {
+            return {
+              ...prevState,
+              spin: false
+            }
+          })
+          console.log({ error });
+        });
+    }
+    else if (authModal.authType === 'signup') {
+      createUserWithEmailAndPassword(auth, userDetail.email, userDetail.password)
+        .then((res) => {
+          // console.log("signup", { res });
+        })
+        .catch((error) => {
+          console.log({ error });
+        });
     }
   }
 
@@ -69,21 +144,46 @@ function Header() {
             <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Deliveroo</span>
           </a>
           <div>
-            <button
-              type="button"
-              onClick={() => {
-                setAuthModal(prevState => {
-                  return {
-                    ...prevState,
-                    showModal: true,
-                    authType: "login"
-                  }
-                })
-              }}
-              class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-full text-sm px-6 py-2 mr-2 mb-2"
-            >
-              Sign in
-            </button>
+            {!isloggedIn ?
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthModal(prevState => {
+                    return {
+                      ...prevState,
+                      showModal: true,
+                      authType: "login"
+                    }
+                  })
+                }}
+                class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-full text-sm px-6 py-2 mr-2 mb-2"
+              >
+                Sign in
+              </button>
+              :
+              <Dropdown
+                label={<Avatar alt="User settings" img="https://flowbite.com/docs/images/people/profile-picture-5.jpg" rounded={true} />}
+                arrowIcon={false}
+                inline={true}
+              >
+                <Dropdown.Header>
+                  <span className="block truncate text-sm font-medium">
+                    {userCredentials.email}
+                  </span>
+                </Dropdown.Header>
+                <Dropdown.Item>
+                  <button
+                    onClick={() => {
+                      signOut(auth).then(() => {
+                        // console.log("sign out successful");
+                        setLoggedIn(false)
+                        router.push("/")
+                      }).catch((error) => {
+                        console.log({ error });
+                      });
+                    }}> Sign out </button>
+                </Dropdown.Item>
+              </Dropdown>}
             <button
               type="button"
               onClick={() => {
@@ -97,7 +197,7 @@ function Header() {
               }}
               class="text-blue-700 hover:text-blue-800 font-medium text-sm px-5 py-2 mr-2 mb-2"
             >
-              Sign up
+              {!isloggedIn ? 'Sign up' : null}
             </button>
           </div>
         </div>
