@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Modal, TextInput, Label, Checkbox, Button } from "flowbite-react";
+import { Modal, TextInput, Label, Checkbox, Button, Spinner } from "flowbite-react";
 
 function SignUp({
   userDetail,
@@ -43,6 +43,7 @@ function SignUp({
               username: '',
             }
           })
+          setShowPassword(false)
         }}
       >
         <Modal.Header />
@@ -150,7 +151,8 @@ function SignUp({
             </div>
             <div className="w-full">
               <Button onClick={handleAuth}>
-                Click here to Register
+                <span className='px-2'>Click here to Register</span>
+                { authModal.spin ? <Spinner /> : null }
               </Button>
             </div>
             <div className="text-sm font-medium text-gray-500">
@@ -181,6 +183,7 @@ function SignUp({
                       username: '',
                     }
                   })
+                  setShowPassword(false)
                 }}
               >
                 Login
