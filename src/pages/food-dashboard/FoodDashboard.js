@@ -40,7 +40,7 @@ function FoodDashboard() {
     initialFetchData();
   }, []);
 
-  console.log({ foodItems });
+  // console.log({ foodItems });
   return (
     <>
       <Header />

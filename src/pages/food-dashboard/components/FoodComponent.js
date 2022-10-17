@@ -4,10 +4,10 @@ import Image from 'next/image';
 import cookie from "../../../assets/cookie.jpeg";
 
 function FoodComponent({ foodItems }) {
-    console.log(foodItems);
+    // console.log(foodItems);
     return (
         <div>
-            {[1,23,43,45,64, 4,4,4,4,4,34,4, 5,45,45,5,5,4,5,6,3,2,3,54,5,23 ].map(item => {
+            {foodItems.data.map(item => {
                 return (
                     <div className="flex justify-center shadow-md" style={{ height: '200px', margin: '30px', padding: '10px' }}>
                         <Image
