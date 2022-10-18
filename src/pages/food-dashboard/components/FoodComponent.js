@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Modal, TextInput, Label, Checkbox, Button, Spinner, Card } from "flowbite-react";
 import Image from 'next/image';
 import cookie from "../../../assets/cookie.jpeg";
+import { GlobalContextObj } from '../../context/globalContext';
 
 function FoodComponent({ foodItems }) {
+    const { cartItem } = useContext(GlobalContextObj);
+    // console.log({cartItem});
     // console.log(foodItems);
     return (
         <div>
