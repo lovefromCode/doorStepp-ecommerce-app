@@ -4,14 +4,13 @@ import { addDoc, collection, getDocs } from "firebase/firestore";
 import { db } from '../../../firebase-setup';
 import Header from '../components/Header';
 import FoodComponent from './components/FoodComponent';
+import CartSection from './components/CartSection';
 
 function FoodDashboard() {
   const [foodItems, setFoodItems] = useState({
     data: [],
     loader: false
   })
-
-  const coll = collection(db, "cities");
 
   useEffect(() => {
     const initialFetchData = async () => {
@@ -41,23 +40,19 @@ function FoodDashboard() {
     initialFetchData();
   }, []);
 
-  console.log({ foodItems });
+  // console.log({ foodItems });
   return (
     <>
       <Header />
-      <div>
+      <div className='flex justify-center'>
         {foodItems.loader ?
           <Spinner /> :
-          null
-        }
-
-        {
-          foodItems.data.map(item => {
-            console.log(item);
-            return (
-              <FoodComponent item={item} />
-            )
-          })
+          <>
+            <FoodComponent
+             foodItems={foodItems}
+            />
+            <CartSection />
+          </>
         }
       </div>
     </>
