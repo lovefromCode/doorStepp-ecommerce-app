@@ -1,9 +1,13 @@
-import styles from '../../styles/Home.module.css';
-import Header from './components/Header';
+import Head from "next/head";
+import Header from '../components/Header';
 
 export default function Home() {
   return (
-    <div className={styles.container}>
+    <div>
+       <Head>
+        <title>DoorStepp</title>
+      </Head>
+
       <Header />
     </div>
   )
