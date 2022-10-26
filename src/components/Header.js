@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { auth } from '../../firebase-setup';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { useRouter } from 'next/router';
@@ -6,9 +6,10 @@ import { Dropdown, Avatar } from "flowbite-react";
 import Login from '../pages/auth/Login';
 import SignUp from '../pages/auth/SignUp';
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
-
+import { GlobalContextObj } from "../pages/context/globalContext";
 
 function Header() {
+  const { cartItems, globalChangeState } = useContext(GlobalContextObj);
   const [showPassword, setShowPassword] = useState(false);
   const [isloggedIn, setLoggedIn] = useState(false);
   const [error, setError] = useState({
@@ -137,7 +138,7 @@ function Header() {
 
   return (
     <div className='bg-gray-900 flex justify-between'>
-      <div className='flex items-center text-3xl text-white mx-10'>
+      <div className='flex items-center text-3xl text-white mx-10 cursor-pointer' onClick={() => router.push("/")}>
         DoorStepp
       </div>
       <div className='w-[10rem] flex justify-between items-center mx-10'>
@@ -183,9 +184,9 @@ function Header() {
             </Dropdown.Item>
           </Dropdown>}
 
-        <div className='relative'>
+        <div className='relative cursor-pointer' onClick={() => router.push("/checkout")}>
           <ShoppingCartIcon className='h-14 w-14 text-white' />
-          <div className='absolute top-[3px] right-[-3px] flex justify-center items-center text-sm bg-yellow-400 font-bold h-6 w-6 rounded-full'>45</div>
+          <div className='absolute top-[3px] right-[-3px] flex justify-center items-center text-sm bg-yellow-400 font-bold h-6 w-6 rounded-full'>{cartItems.length}</div>
         </div>
       </div>
 

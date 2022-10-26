@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Image from 'next/image';
 import { StarIcon, CurrencyDollarIcon } from '@heroicons/react/24/solid';
+import { GlobalContextObj } from "../pages/context/globalContext";
 
 function Product({
+    id,
     category,
     description,
     price,
@@ -10,6 +12,36 @@ function Product({
     rating,
     image,
 }) {
+    const { cartItems, globalChangeState } = useContext(GlobalContextObj);
+    const [toggle, settoggle] = useState(false)
+
+    const handleAddToBasket = () => {
+        console.log("handleAddToBasket called...");
+        settoggle(!toggle)
+    }
+
+    useEffect(() => {
+        if (toggle === true) {
+            globalChangeState({
+                cartItems: [...cartItems, {
+                    id,
+                    category,
+                    description,
+                    price,
+                    title,
+                    rating,
+                    image,
+                }]
+            })
+        }
+        else {
+            let productAfterRemoval = cartItems.filter(x => x.id !== id)
+            globalChangeState({
+                cartItems: [...productAfterRemoval]
+            })
+        }
+    }, [toggle])
+
     return (
         <div className='relative flex flex-col m-5 bg-white p-10 z-30'>
             <p className='absolute top-2 right-2 text-xs italic text-gray-400'>{category}</p>
@@ -28,9 +60,11 @@ function Product({
                     <span className='text-sm'> {price}</span>
                 </div>
             </div>
-            <p className='text-sm mb-5'>{description.length > 130 ? description.substring(0, 130)+"..." : description} </p>
+            <p className='text-sm mb-5'>{description.length > 130 ? description.substring(0, 130) + "..." : description} </p>
 
-            <button className='bg-yellow-500'>Add to basket</button>
+            <button className='bg-yellow-500' onClick={handleAddToBasket}>
+                {toggle ? "Added" : "Add to Basket"}
+            </button>
         </div>
     )
 }

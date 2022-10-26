@@ -1,13 +1,15 @@
 import React, { createContext, useState } from 'react'
 
 const initialState = {
-    cartItem: {
-        dish_name: undefined,
-        dish_pic: undefined,
-        description: undefined,
-        rating: 0,
-        count: 1
-    },
+    cartItems: []
+    // {
+    //     category: undefined,
+    //     description: undefined,
+    //     price: undefined,
+    //     title: undefined,
+    //     rating: undefined,
+    //     image: undefined,
+    // }
 };
 
 export const GlobalContextObj = createContext(initialState);
