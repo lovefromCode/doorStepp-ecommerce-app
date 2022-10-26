@@ -2,13 +2,13 @@ import React from 'react'
 import Product from './Product'
 
 function ProductFeed({ products }) {
-  console.log(products);
   return (
-    <div className='bg-[#EAEDED]'>
+    <div className='bg-[#EAEDED] max-w-screen-2xl mx-auto'>
       {
         products.map(product =>
           <Product
             key={product.id}
+            id={product.id}
             category={product.category}
             description={product.description}
             price={product.price}
@@ -23,3 +23,5 @@ function ProductFeed({ products }) {
 }
 
 export default ProductFeed
+
+//!!!!  max-w-screen-2xl mx-auto --- for making responsive

@@ -1,3 +1,4 @@
+import React, { useState, useContext, useEffect, } from 'react';
 import Head from "next/head";
 import Header from '../components/Header';
 import ProductFeed from "../components/ProductFeed";
