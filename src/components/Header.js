@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { auth } from '../../../firebase-setup';
+import React, { useState, useEffect, useContext } from 'react';
+import { auth } from '../../firebase-setup';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { useRouter } from 'next/router';
 import { Dropdown, Avatar } from "flowbite-react";
-import Login from '../auth/Login';
-import SignUp from '../auth/SignUp';
-
+import Login from '../pages/auth/Login';
+import SignUp from '../pages/auth/SignUp';
+import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { GlobalContextObj } from "../pages/context/globalContext";
 
 function Header() {
+  const { cartItems, globalChangeState } = useContext(GlobalContextObj);
   const [showPassword, setShowPassword] = useState(false);
   const [isloggedIn, setLoggedIn] = useState(false);
   const [error, setError] = useState({
@@ -135,73 +137,58 @@ function Header() {
   }
 
   return (
-    <div>
+    <div className='bg-gray-900 flex justify-between'>
+      <div className='flex items-center text-3xl text-white mx-10 cursor-pointer' onClick={() => router.push("/")}>
+        DoorStepp
+      </div>
+      <div className='w-[10rem] flex justify-between items-center mx-10'>
 
-      <nav class="bg-gray-50 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900">
-        <div class="container flex justify-between">
-          <a href="https://flowbite.com/" class="flex items-center">
-            <img src="https://flowbite.com/docs/images/logo.svg" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
-            <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Deliveroo</span>
-          </a>
-          <div>
-            {!isloggedIn ?
+        {!isloggedIn ?
+          <button
+            type="button"
+            onClick={() => {
+              setAuthModal(prevState => {
+                return {
+                  ...prevState,
+                  showModal: true,
+                  authType: "login"
+                }
+              })
+            }}
+            class="text-white bg-emerald-800 hover:bg-emerald-900 rounded-full text-sm px-6 py-2"
+          >
+            Login
+          </button>
+          :
+          <Dropdown
+            label={<Avatar alt="User settings" img="https://flowbite.com/docs/images/people/profile-picture-5.jpg" rounded={true} />}
+            arrowIcon={false}
+            inline={true}
+          >
+            <Dropdown.Header>
+              <span className="block truncate text-sm font-medium">
+                {userCredentials.email}
+              </span>
+            </Dropdown.Header>
+            <Dropdown.Item>
               <button
-                type="button"
                 onClick={() => {
-                  setAuthModal(prevState => {
-                    return {
-                      ...prevState,
-                      showModal: true,
-                      authType: "login"
-                    }
-                  })
-                }}
-                class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-full text-sm px-6 py-2 mr-2 mb-2"
-              >
-                Sign in
-              </button>
-              :
-              <Dropdown
-                label={<Avatar alt="User settings" img="https://flowbite.com/docs/images/people/profile-picture-5.jpg" rounded={true} />}
-                arrowIcon={false}
-                inline={true}
-              >
-                <Dropdown.Header>
-                  <span className="block truncate text-sm font-medium">
-                    {userCredentials.email}
-                  </span>
-                </Dropdown.Header>
-                <Dropdown.Item>
-                  <button
-                    onClick={() => {
-                      signOut(auth).then(() => {
-                        // console.log("sign out successful");
-                        setLoggedIn(false)
-                        router.push("/")
-                      }).catch((error) => {
-                        console.log({ error });
-                      });
-                    }}> Sign out </button>
-                </Dropdown.Item>
-              </Dropdown>}
-            <button
-              type="button"
-              onClick={() => {
-                setAuthModal(prevState => {
-                  return {
-                    ...prevState,
-                    showModal: true,
-                    authType: "signup"
-                  }
-                })
-              }}
-              class="text-blue-700 hover:text-blue-800 font-medium text-sm px-5 py-2 mr-2 mb-2"
-            >
-              {!isloggedIn ? 'Sign up' : null}
-            </button>
-          </div>
+                  signOut(auth).then(() => {
+                    // console.log("sign out successful");
+                    setLoggedIn(false)
+                    router.push("/")
+                  }).catch((error) => {
+                    console.log({ error });
+                  });
+                }}> Sign out </button>
+            </Dropdown.Item>
+          </Dropdown>}
+
+        <div className='relative cursor-pointer' onClick={() => router.push("/cart")}>
+          <ShoppingCartIcon className='h-14 w-14 text-white' />
+          <div className='absolute top-[3px] right-[-3px] flex justify-center items-center text-sm bg-yellow-400 font-bold h-6 w-6 rounded-full'>{cartItems.length}</div>
         </div>
-      </nav>
+      </div>
 
 
       {
@@ -245,3 +232,20 @@ function Header() {
 }
 
 export default Header
+
+
+{/* <button
+              type="button"
+              onClick={() => {
+                setAuthModal(prevState => {
+                  return {
+                    ...prevState,
+                    showModal: true,
+                    authType: "signup"
+                  }
+                })
+              }}
+              class="text-blue-700 hover:text-blue-800 font-medium text-sm px-5 py-2 mr-2 mb-2"
+            >
+              {!isloggedIn ? 'Sign up' : null}
+            </button> */}
