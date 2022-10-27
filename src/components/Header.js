@@ -184,7 +184,7 @@ function Header() {
             </Dropdown.Item>
           </Dropdown>}
 
-        <div className='relative cursor-pointer' onClick={() => router.push("/checkout")}>
+        <div className='relative cursor-pointer' onClick={() => router.push("/cart")}>
           <ShoppingCartIcon className='h-14 w-14 text-white' />
           <div className='absolute top-[3px] right-[-3px] flex justify-center items-center text-sm bg-yellow-400 font-bold h-6 w-6 rounded-full'>{cartItems.length}</div>
         </div>
